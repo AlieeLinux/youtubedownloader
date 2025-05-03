@@ -34,7 +34,7 @@ async def download_flac():
     os.system(f'yt-dlp --cookies-from-browser firefox -x --audio-quality 0 --audio-format flac "{flink}" --embed-metadata --parse-metadata "playlist_index:%(track_number)s" -o /tmp/pske')
 
 def ffmpeg_function():
-    os.system(f"ffmpeg -i /tmp/pske.flac -i /tmp/21.png -c:a libopus -b:a 400k -f opus {namemusic}")
+    os.system(f"ffmpeg -i /tmp/pske.flac -i /tmp/21.png -c:a libopus -b:a 350k -sample_fmt 24 -f opus {namemusic}")
 
 #    os.system(f"ffmpeg -i /tmp/pske.flac -i /tmp/21.png -c:a libopus -b:a 400k -c:v png -map 0:0 -map 1:0  {namemusic}")
 #    os.system(f"ffmpeg -i /tmp/pske.opus -i /tmp/21.png -map 1:0 -map 0:0 -c copy {namemusic}")
