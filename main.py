@@ -1,5 +1,4 @@
 import os
-import subprocess
 import asyncio
 
 delfile = '/tmp/21.png'
@@ -9,10 +8,10 @@ async def removes():
     for keycontext in os.listdir("/tmp"):
         if keycontext == '21.png':
             os.remove(f"{delfile}")
-        elif keycontext == 'imafile.webp':
+        elif keycontext == 'imafile.flac':
             os.remove(delfile2)
-        elif keycontext == 'pske.m4a':
-            os.remove("/tmp/pske.m4a")
+        elif keycontext == 'pske.flac':
+            os.remove("/tmp/pske.flac")
         elif keycontext == "pske.mp3":
             os.remove("/tmp/pske.mp3")
 
@@ -29,19 +28,20 @@ flink = f'{link}'
 print("Downloading the thumbnail")
 
 async def download_thumbnail():
-    os.system(f"/usr/bin/yt-dlp '{flink}' --embed-thumbnail --no-download  -o /tmp/imafile &")
+    os.system(f"/usr/bin/yt-dlp --cookies-from-browser firefox  '{flink}' --embed-thumbnail --no-download  -o /tmp/imafile &")
 
-async def download_m4a():
-    os.system(f'yt-dlp -f140 "{flink}" --embed-metadata --parse-metadata "playlist_index:%(track_number)s" -o /tmp/pske.m4a')
+async def download_flac():
+    os.system(f'yt-dlp --cookies-from-browser firefox -x --audio-quality 0 --audio-format flac "{flink}" --embed-metadata --parse-metadata "playlist_index:%(track_number)s" -o /tmp/pske')
 
 def ffmpeg_function():
-    os.system(f'ffmpeg -i /tmp/imafile.webp -vf "crop=w=min(min(iw\,ih)\,720):h=min(min(iw\,ih)\,720),scale=720:720,setsar=1" -vframes 1 /tmp/21.png')
-    os.system("ffmpeg -i /tmp/pske.m4a -c:a libmp3lame /tmp/pske.mp3")
-    os.system(f"ffmpeg -i /tmp/pske.mp3 -i /tmp/21.png -map 1:0 -map 0:0 -c copy {namemusic}")
+    os.system(f"ffmpeg -i /tmp/pske.flac -i /tmp/21.png -c:a libopus -b:a 400k -f opus {namemusic}")
+
+#    os.system(f"ffmpeg -i /tmp/pske.flac -i /tmp/21.png -c:a libopus -b:a 400k -c:v png -map 0:0 -map 1:0  {namemusic}")
+#    os.system(f"ffmpeg -i /tmp/pske.opus -i /tmp/21.png -map 1:0 -map 0:0 -c copy {namemusic}")
 
 async def main():
     await removes()
-    await asyncio.gather(download_thumbnail(), download_m4a())
+    await asyncio.gather(download_thumbnail(), download_flac())
 
 
 asyncio.run(main())
